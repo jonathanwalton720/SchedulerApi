@@ -1,8 +1,4 @@
-# Scheduler API
-
-Simple overview of use/purpose.
-
-## Scheduler Api
+# Scheduler Api
 
 The Scheduler Api demonstrates the use of a BackgroundService in .NET using Asp .NET Web Api. The "SchedulingService" BackgroundService can be used against any SSRS reporting server to dynamically update the StartDate and EndDate parameters, foregoing the need to update stored procedures with parameters that dynamically generate each time a report subscription is run in SSRS.
 
