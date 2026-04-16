@@ -1,9 +1,11 @@
-﻿using JonathanWalton720.SchedulerApi.Models;
+﻿
+using SchedulerDb.Enums;
 
-namespace JonathanWalton720.SchedulerApi.Models
+namespace SchedulerDb.Models
 {
     public class SubscriptionTask
     {
+        public int Id { get; set; }
         public DateTime? NextRunDate { get; set; }
         public DateTime StartDate { get; set; }
         public int RecurrenceTypeID { get; set; }
@@ -14,7 +16,7 @@ namespace JonathanWalton720.SchedulerApi.Models
         public int? DaysOfMonth { get; set; }
         public int? Month { get; set; }
         public int? MonthlyWeek { get; set; }
-        public string SubscriptionId { get; internal set; }
-        public object ReportPath { get; internal set; }
+        public string SubscriptionId { get; set; }
+        public string ReportPath { get; set; }
     }
 }

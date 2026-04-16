@@ -1,4 +1,4 @@
-﻿namespace JonathanWalton720.SchedulerApi.Models
+﻿namespace SchedulerApi.Models
 {
     public class SubscriptionErrorResponse
     {
@@ -7,8 +7,8 @@
 
     public class SubscriptionError
     {
-        public string? Code { get; set; }
+        public string Code { get; set; }
 
-        public string? Message { get; set; }
+        public string Message { get; set; }
     }
 }

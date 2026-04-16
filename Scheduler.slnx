@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="SchedulerApi/SchedulerApi.csproj" />
+  <Project Path="SchedulerDb/SchedulerDb.csproj" Id="360e62ef-ca6a-48a5-b737-4267506a4422" />
+</Solution>

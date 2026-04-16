@@ -1,33 +1,29 @@
-﻿using JonathanWalton720.SchedulerApi.Models;
-using JonathanWalton720.SchedulerApi.Utilities;
+﻿using SchedulerApi.Models;
+using SchedulerApi.Utilities;
+using SchedulerDb.Models;
 using System.Text.Json;
 
-namespace JonathanWalton720.SchedulerApi.Services
+namespace SchedulerApi.Services
 {
-    public class SchedulingService : BackgroundService
+    public class SchedulingService(IRepository repository, IHttpClientFactory httpClientFactory, ILoggerFactory loggerFactory, IConfiguration configuration) : BackgroundService
     {
-        private readonly int _schedulingServiceInterval;
-        private readonly ILogger _logger;
-        private readonly HttpClient _httpClient;
-        private readonly IRepository _repository;
-
+        private readonly int _schedulingServiceInterval = configuration.GetValue<int>("ReportSchedulingIntervalSeconds", 20);
+        private readonly ILogger _logger = loggerFactory.CreateLogger<SchedulingService>();
+        private readonly HttpClient _httpClient = httpClientFactory.CreateClient();
+        private readonly IRepository _repository = repository;
 
         public string UserName => Environment.UserName;
-
-        public SchedulingService(IRepository repository, IHttpClientFactory httpClientFactory, ILoggerFactory loggerFactory, IConfiguration configuration)
-        {
-            _schedulingServiceInterval = configuration.GetValue<int>("ReportSchedulingIntervalSeconds", 20);
-
-            _logger = loggerFactory.CreateLogger<SchedulingService>();
-            _httpClient = httpClientFactory.CreateClient();
-            _repository = repository;
-        }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             while (!stoppingToken.IsCancellationRequested)
             {
-                _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
+
+                if (_logger.IsEnabled(LogLevel.Information))
+                {
+                    _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
+                }
+
                 try
                 {
                     var subscriptionSchedules = _repository.GetSubscriptionTasks();
@@ -76,11 +72,14 @@ namespace JonathanWalton720.SchedulerApi.Services
             try
             {
                 executeResponse.EnsureSuccessStatusCode();
-                _logger.LogInformation($"Subscription {task.SubscriptionId} success");
+                if (_logger.IsEnabled(LogLevel.Information))
+                {
+                    _logger.LogInformation("Subscription {subscriptionId} success", task.SubscriptionId);
+                }
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"error executing Subscription {task.SubscriptionId}");
+                _logger.LogError(ex, "Error executing Subscription {subscriptionId}", task.SubscriptionId);
                 return;
             }
 
@@ -90,7 +89,7 @@ namespace JonathanWalton720.SchedulerApi.Services
 
         }
 
-        private DateTime GetDefaultLastRunDate(SubscriptionTask task)
+        private static DateTime GetDefaultLastRunDate(SubscriptionTask task)
         {
             switch (task.RecurrenceTypeID)
             {
@@ -121,14 +120,14 @@ namespace JonathanWalton720.SchedulerApi.Services
         {
             if (!task.NextRunDate.HasValue)
             {
-                _logger.LogWarning($"NextRunDate is null for subscription {task.SubscriptionId}, skipping parameter update.");
+                _logger.LogWarning("NextRunDate is null for subscription {subscriptionId}, skipping parameter update.", task.SubscriptionId);
                 return false;
             }
             var parameterValues = new List<SubscriptionParameter>
-                {
-                    new SubscriptionParameter { Name = "StartDate", Value = lastRunDate.ToString("yyyy-MM-ddTHH:mm:ss") },
-                    new SubscriptionParameter { Name = "EndDate", Value = task.NextRunDate.Value.ToString("yyyy-MM-ddTHH:mm:ss") }
-                };
+            {
+                new() { Name = "StartDate", Value = lastRunDate.ToString("yyyy-MM-ddTHH:mm:ss") },
+                new() { Name = "EndDate", Value = task.NextRunDate.Value.ToString("yyyy-MM-ddTHH:mm:ss") }
+            };
 
             var patch = new
             {
@@ -146,7 +145,7 @@ namespace JonathanWalton720.SchedulerApi.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"error patching ParameterDefinitions {task.ReportPath}");
+                _logger.LogError(ex, "Error patching ParameterDefinitions {reportPath}", task.ReportPath);
                 return false;
             }
 
@@ -157,7 +156,7 @@ namespace JonathanWalton720.SchedulerApi.Services
         {
             var hasParameters = false;
 
-            ReportParameterDefinitionResponse? parameterDefinitionResponse;
+            ReportParameterDefinitionResponse parameterDefinitionResponse;
             try
             {
                 var response = await _httpClient.GetAsync($"Reports(path%3D'{task.ReportPath}')/ParameterDefinitions");
@@ -170,7 +169,7 @@ namespace JonathanWalton720.SchedulerApi.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"error executing ParameterDefinitions {task.ReportPath}");
+                _logger.LogError(ex, "Error executing ParameterDefinitions {reportPath}", task.ReportPath);
                 return null;
             }
 

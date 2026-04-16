@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace JonathanWalton720.SchedulerApi.Models
+namespace SchedulerApi.Models
 {
     public class SubscriptionScheduleDefinitionMonthlyRecurrence
     {

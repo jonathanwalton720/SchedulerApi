@@ -1,6 +1,7 @@
-﻿using JonathanWalton720.SchedulerApi.Models;
+﻿using SchedulerDb;
+using SchedulerDb.Models;
 
-namespace JonathanWalton720.SchedulerApi.Services
+namespace SchedulerApi.Services
 {
     public interface IRepository
     {
@@ -9,11 +10,17 @@ namespace JonathanWalton720.SchedulerApi.Services
     }
 
 
-    public class Repository : IRepository
+    public class Repository(SchedulerDbContext context) : IRepository
     {
+        private readonly SchedulerDbContext _context = context;
+
         public List<SubscriptionTask> GetSubscriptionTasks()
         {
-            throw new NotImplementedException();
+
+            var susbscriptionTasks = from st in _context.SubscriptionTasks
+                                     where st.NextRunDate < DateTime.Now && st.NextRunDate != null 
+                                     select _context.SubscriptionTasks;
+            return [.. _context.SubscriptionTasks];
         }
 
         public void ProcessSubscriptionSchedule(SubscriptionTask task)

@@ -1,4 +1,4 @@
-﻿namespace JonathanWalton720.SchedulerApi.Models
+﻿namespace SchedulerApi.Models
 {
     public class ReportParameterDefinitionResponse
     {

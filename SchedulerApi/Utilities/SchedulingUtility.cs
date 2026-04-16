@@ -1,10 +1,11 @@
-﻿using JonathanWalton720.SchedulerApi.Models;
+﻿using SchedulerApi.Models;
+using SchedulerDb.Models;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 
-namespace JonathanWalton720.SchedulerApi.Utilities
+namespace SchedulerApi.Utilities
 {
     public static class SchedulingUtility
     {
@@ -28,7 +29,7 @@ namespace JonathanWalton720.SchedulerApi.Utilities
             DayOfWeek firstDayOfWeek = CultureInfo.CurrentCulture.DateTimeFormat.FirstDayOfWeek;
 
             // Find the first day of the month
-            DateTime firstOfMonth = new DateTime(date.Year, date.Month, 1);
+            DateTime firstOfMonth = new (date.Year, date.Month, 1);
 
             // Find the first occurrence of the culture's FirstDayOfWeek in the month or the days just before
             int daysToAdd = ((int)firstDayOfWeek - (int)firstOfMonth.DayOfWeek + 7) % 7;
@@ -169,7 +170,7 @@ namespace JonathanWalton720.SchedulerApi.Utilities
 
         public static List<int> ConvertBitmaskToListOfInts(int mask, int length)
         {
-            List<int> days = new List<int>();
+            var days = new List<int>();
 
             // mask for Month column will have 12 bits
             for (int i = 0; i < length; i++)

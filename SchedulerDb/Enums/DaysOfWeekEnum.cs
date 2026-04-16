@@ -1,4 +1,4 @@
-﻿namespace SchedulerApi.Models
+﻿namespace SchedulerDb.Enums
 {
     [System.Flags]
     public enum DaysOfWeekEnum
