@@ -4,12 +4,12 @@
     public enum DaysOfWeekEnum
     {
         None = 0,
-        Sunday = 1,      // or 1 << 0
-        Monday = 2,      // or 1 << 1
-        Tuesday = 4,     // or 1 << 2
-        Wednesday = 8,   // or 1 << 3
-        Thursday = 16,   // or 1 << 4
-        Friday = 32,     // or 1 << 5
-        Saturday = 64    // or 1 << 6
+        Sunday = 1,
+        Monday = 2,
+        Tuesday = 4,
+        Wednesday = 8,
+        Thursday = 16,
+        Friday = 32,
+        Saturday = 64
     }
 }

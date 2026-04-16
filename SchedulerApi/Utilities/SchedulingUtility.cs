@@ -1,4 +1,5 @@
 ﻿using SchedulerApi.Models;
+using SchedulerDb.Enums;
 using SchedulerDb.Models;
 using System;
 using System.Collections.Generic;
